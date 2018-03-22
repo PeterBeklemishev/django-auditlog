@@ -6,6 +6,7 @@ import json
 from django.db import migrations, models
 from auditlog.models import LogEntry
 from django.contrib.postgres.fields import JSONField
+from django.utils.translation import ugettext_lazy as _
 
 def copy_str_changes_to_json(apps, schema_editor):
     AuthorPublisherProfile = apps.get_model('portal','AuthorPublisherProfile')
