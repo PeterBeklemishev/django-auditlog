@@ -5,6 +5,7 @@ import json
 
 from django.db import migrations, models
 from auditlog.models import logentry
+from django.contrib.postgres.fields import JSONField
 
 def copy_str_changes_to_json(apps, schema_editor):
     AuthorPublisherProfile = apps.get_model('portal','AuthorPublisherProfile')
@@ -22,7 +23,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='logentry',
             name='changes_json',
-            field=models.JSONField(null=True, verbose_name=_("change message")),
+            field=JSONField(null=True, verbose_name=_("change message")),
         ),
         migrations.RunPython(copy_str_changes_to_json),
         migrations.RemoveField(
