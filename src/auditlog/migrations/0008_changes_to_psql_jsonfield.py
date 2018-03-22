@@ -4,14 +4,13 @@ from __future__ import unicode_literals
 import json
 
 from django.db import migrations, models
-from auditlog.models import LogEntry
 from django.contrib.postgres.fields import JSONField
 from django.utils.translation import ugettext_lazy as _
 
 def copy_str_changes_to_json(apps, schema_editor):
-    AuthorPublisherProfile = apps.get_model('portal','AuthorPublisherProfile')
-    for entry in LogEntry.objects.all():
-        entry.changes_json = json.loads(entry.changes)
+    LogEntry = apps.get_model('auditlog','LogEntry')
+    for entry in LogEntry.objects.raw('SELECT * FROM auditlog_logentry'):
+        entry.changes = json.loads(entry.changes_old)
         entry.save()
 
 class Migration(migrations.Migration):
@@ -21,19 +20,19 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RenameField(
+            model_name='logentry',
+            old_name='changes',
+            new_name='changes_old',
+        ),
         migrations.AddField(
             model_name='logentry',
-            name='changes_json',
+            name='changes',
             field=JSONField(null=True, verbose_name=_("change message")),
         ),
         migrations.RunPython(copy_str_changes_to_json),
         migrations.RemoveField(
             model_name='logentry',
-            name='changes',
-        ),
-        migrations.RenameField(
-            model_name='logentry',
-            old_name='changes_json',
-            new_name='changes',
+            name='changes_old',
         ),
     ]
