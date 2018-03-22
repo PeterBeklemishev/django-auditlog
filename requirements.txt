@@ -1,2 +1,1 @@
-jsonfield>=2.0.2
 python-dateutil==2.6.0
