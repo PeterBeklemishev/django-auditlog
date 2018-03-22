@@ -4,12 +4,12 @@ from __future__ import unicode_literals
 import json
 
 from django.db import migrations, models
-from auditlog.models import logentry
+from auditlog.models import LogEntry
 from django.contrib.postgres.fields import JSONField
 
 def copy_str_changes_to_json(apps, schema_editor):
     AuthorPublisherProfile = apps.get_model('portal','AuthorPublisherProfile')
-    for entry in logentry.objects.all():
+    for entry in LogEntry.objects.all():
         entry.changes_json = json.loads(entry.changes)
         entry.save()
 
