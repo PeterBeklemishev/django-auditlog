@@ -14,7 +14,8 @@ from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.six import iteritems, integer_types
 from django.utils.translation import ugettext_lazy as _
 
-from jsonfield.fields import JSONField
+# from jsonfield.fields import JSONField
+from django.contrib.postgres.fields import JSONField
 from dateutil import parser
 from dateutil.tz import gettz
 
@@ -176,7 +177,7 @@ class LogEntry(models.Model):
     object_id = models.BigIntegerField(blank=True, db_index=True, null=True, verbose_name=_("object id"))
     object_repr = models.TextField(verbose_name=_("object representation"))
     action = models.PositiveSmallIntegerField(choices=Action.choices, verbose_name=_("action"))
-    changes = models.TextField(blank=True, verbose_name=_("change message"))
+    changes = models.JSONField(null=True, verbose_name=_("change message"))
     actor = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True, related_name='+', verbose_name=_("actor"))
     remote_addr = models.GenericIPAddressField(blank=True, null=True, verbose_name=_("remote address"))
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("timestamp"))
@@ -208,7 +209,7 @@ class LogEntry(models.Model):
         :return: The changes recorded in this log entry as a dictionary object.
         """
         try:
-            return json.loads(self.changes)
+            return self.changes
         except ValueError:
             return {}
 
