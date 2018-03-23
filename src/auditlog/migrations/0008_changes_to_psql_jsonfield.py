@@ -9,8 +9,13 @@ from django.utils.translation import ugettext_lazy as _
 
 def copy_str_changes_to_json(apps, schema_editor):
     LogEntry = apps.get_model('auditlog','LogEntry')
-    for entry in LogEntry.objects.raw('SELECT * FROM auditlog_logentry'):
-        entry.changes = json.loads(entry.changes_old)
+    # because you could have null or blank - just get all of them and the ones that can't be loaded are skipped
+    for entry in LogEntry.objects.raw("SELECT * FROM auditlog_logentry"):
+        try:
+            json_value = json.loads(json.loads(entry.changes_old))
+        except TypeError as e:
+            continue
+        entry.changes = json_value
         entry.save()
 
 class Migration(migrations.Migration):
@@ -20,6 +25,15 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RemoveField(
+            model_name='logentry',
+            name='additional_data',
+        ),
+        migrations.AddField(
+            model_name='logentry',
+            name='additional_data',
+            field=JSONField(null=True, verbose_name=_("additional data"))
+        ),
         migrations.RenameField(
             model_name='logentry',
             old_name='changes',
