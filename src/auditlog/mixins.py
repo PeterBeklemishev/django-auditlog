@@ -45,7 +45,6 @@ class LogEntryAdminMixin(object):
             return obj.object_repr
         else:
             return format_html(u'<a href="%s">%s</a>' % (link, obj.object_repr))
-    resource_url.allow_tags = True
     resource_url.short_description = 'Resource'
 
     def msg_short(self, obj):
@@ -70,5 +69,5 @@ class LogEntryAdminMixin(object):
             value = [i, field] + (['***', '***'] if field == 'password' else changes[field])
             msg += '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % tuple(value)
         msg += '</table>'
-        return mark_save(msg)
+        return mark_safe(msg)
     msg.short_description = 'Changes'
