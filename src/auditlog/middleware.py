@@ -82,3 +82,27 @@ class AuditlogMiddleware(MiddlewareMixin):
                 instance.actor = user
 
             instance.remote_addr = threadlocal.auditlog['remote_addr']
+
+
+def get_current_request():
+    """ returns the request object for this thread """
+    return getattr(threadlocal, "request", None)
+
+def get_current_user():
+    print('get_curr_user')
+    """ returns the current user, if exist, otherwise returns None """
+    request = get_current_request()
+    if request:
+        return getattr(request, "user", None)
+
+class ThreadLocalMiddleware(MiddlewareMixin):
+    """ Simple middleware that adds the request object in thread local stor    age."""
+
+    def process_request(self, request):
+        print('ThreadLocalMiddleware procreq', self, request, request.user)
+        threadlocal.request = request
+
+    def process_response(self, request, response):
+        if hasattr(threadlocal, 'request'):
+            del threadlocal.request
+        return response
