@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from auditlog.diff import model_instance_diff
 from auditlog.models import LogEntry
 from auditlog.middleware import get_current_user
+from django.contrib.auth.models import AnonymousUser
 
 
 def log_create(sender, instance, created, **kwargs):
@@ -15,6 +16,9 @@ def log_create(sender, instance, created, **kwargs):
         try:
             actor = get_current_user()
         except:
+            actor = None
+
+        if isinstance(actor, AnonymousUser):
             actor = None
 
         changes = model_instance_diff(None, instance)
@@ -46,6 +50,10 @@ def log_update(sender, instance, **kwargs):
             except:
                 actor = None
 
+            if isinstance(actor, AnonymousUser):
+                actor = None
+
+
             changes = model_instance_diff(old, new)
 
             # Log an entry only if there are changes
@@ -69,6 +77,9 @@ def log_delete(sender, instance, **kwargs):
         try:
             actor = get_current_user()
         except:
+            actor = None
+
+        if isinstance(actor, AnonymousUser):
             actor = None
 
         changes = model_instance_diff(instance, None)
