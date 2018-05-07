@@ -19,7 +19,7 @@ MAX = 75
 class LogEntryAdminMixin(object):
 
     def created(self, obj):
-        return obj.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        return obj.timestamp.strftime('%Y-%m-%d %H:%M:%S:%f')
     created.short_description = 'Created'
 
     def user_url(self, obj):
