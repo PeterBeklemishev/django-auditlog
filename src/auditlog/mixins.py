@@ -21,6 +21,7 @@ class LogEntryAdminMixin(object):
     def created(self, obj):
         return obj.timestamp.strftime('%Y-%m-%d %H:%M:%S:%f')
     created.short_description = 'Created'
+    created.admin_order_field = 'timestamp'
 
     def user_url(self, obj):
         if obj.actor:
