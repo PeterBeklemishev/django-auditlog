@@ -88,14 +88,16 @@ def get_current_request():
     """ returns the request object for this thread """
     return getattr(threadlocal, "request", None)
 
+
 def get_current_user():
     """ returns the current user, if exist, otherwise returns None """
     request = get_current_request()
     if request:
         return getattr(request, "user", None)
 
+
 class ThreadLocalMiddleware(MiddlewareMixin):
-    """ Simple middleware that adds the request object in thread local stor    age."""
+    """ Simple middleware that adds the request object in thread local storage."""
 
     def process_request(self, request):
         threadlocal.request = request

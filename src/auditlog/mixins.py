@@ -72,3 +72,13 @@ class LogEntryAdminMixin(object):
         msg += '</table>'
         return mark_safe(msg)
     msg.short_description = 'Changes'
+
+
+class AuditLogAdditionalDataMixin(object):
+    def get_additional_data(self):
+        additional_data = {}
+        if hasattr(self, '_auditlog_args'):
+            additional_data = getattr(self, '_auditlog_args')
+            del self._auditlog_args
+
+        return additional_data

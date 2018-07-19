@@ -49,7 +49,14 @@ class LogEntryManager(models.Manager):
 
             get_additional_data = getattr(instance, 'get_additional_data', None)
             if callable(get_additional_data):
-                kwargs.setdefault('additional_data', get_additional_data())
+                additional_data = get_additional_data()
+                actor_id = additional_data.get('actor_id', '')
+                if actor_id:
+                    kwargs.pop('actor', None)
+                    kwargs.pop('actor_id', None)
+                    kwargs['actor_id'] = actor_id
+
+                kwargs.setdefault('additional_data', additional_data)
 
             # Delete log entries with the same pk as a newly created model. This should only be necessary when an pk is
             # used twice.
